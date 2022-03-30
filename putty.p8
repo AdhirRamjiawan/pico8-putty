@@ -1,0 +1,83 @@
+pico-8 cartridge // http://www.pico-8.com
+version 35
+__lua__
+
+local ball = 
+{ 
+	x=35,
+	y=35,
+	s=2,
+	a=0,
+	dx=20,
+	dy=20,
+	move=false
+}
+
+function _init()
+end
+
+
+function _update()
+	if btn(❎) then
+		ball.move = true
+	end
+	
+	if btn(⬅️) then
+		ball.a -= 0.025
+	elseif btn(➡️) then
+		ball.a += 0.025
+	else
+		ball.a = 0
+	end
+	
+	if ball.move then
+		ball.x += 0.5
+		ball.y += 0.5
+		ball.dx += 0.5
+		ball.dy += 0.5
+	end
+	
+	if ball.move and 
+	   ball.x > 80 then
+	   ball.move = false
+	end
+	
+ ball.r = ball.a * 0.01745
+
+	local x = ball.dx - ball.x
+	local y = ball.dy - ball.y
+	
+	ball.dx = (x*cos(ball.r))-(y*sin(ball.r))
+	ball.dy = (y*cos(ball.r))+(x*sin(ball.r))
+	
+	ball.dx += ball.x
+	ball.dy += ball.y
+
+end
+
+function _draw()
+	cls()
+	print("putty")
+	print(ball.a)
+	print(ball.dx)
+	print(ball.dy)
+	print(ball.a * (0.01745))
+	rect(20, 20, 120, 120)
+	
+	circ(ball.x, ball.y, ball.s)
+	
+	if not ball.move then
+		line(
+	    ball.x,
+	    ball.y,
+	    ball.dx,
+	    ball.dy)
+	end
+end
+__gfx__
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00700700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00077000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00077000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+00700700000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
