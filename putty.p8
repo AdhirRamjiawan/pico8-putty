@@ -5,13 +5,15 @@ __lua__
 local ball = 
 { 
 	x=35,
-	y=35,
+	y=30,
 	s=2,
 	a=0,
 	dx=1,
 	dy=1,
 	px=20,
 	py=20,
+	fx=0, -- final point x
+	fy=0, -- final point y
 	move=false,
 	tl = 0
 }
@@ -35,19 +37,23 @@ end
 function _update()
 	if btn(❎) then
 		ball.move = true
+		calc_final_point()
 	end
 	
 	if not ball.move and btn(⬅️) then
 		ball.a -= 0.025
 	elseif not ball.move and btn(➡️) then
 		ball.a += 0.025
-	else
-		ball.a = 0
 	end
 	
 	if ball.move then
+--		ball.x += ball.s * ball.dx
+--		ball.y += ball.s * ball.dy
+
 		ball.x += ball.s * ball.dx
-		ball.y += ball.s * ball.dy
+		ball.y += line_eq() * ball.dy
+		
+			
 		ball.tl += 1
 		
 		update_dir()
@@ -66,9 +72,9 @@ end
 function _draw()
 	cls()
 	print("putty")
-	print(ball.a)
-	print(ball.dx)
-	print(ball.dy)
+	print(ball.r)
+	print(ball.fx)
+	print(ball.fy)
 	print(ball.a * (0.01745))
 	rect(mb.x, mb.y, mb.x2, mb.y2)
 	
@@ -104,7 +110,7 @@ function update_dir()
 end
 
 function update_dir_point()
-	ball.r = ball.a * 0.01745
+	ball.r = 10 +(ball.a * 0.01745)
 
 	local x = ball.px - ball.x
 	local y = ball.py - ball.y
@@ -114,6 +120,23 @@ function update_dir_point()
 	
 	ball.px += ball.x
 	ball.py += ball.y
+end
+
+function calc_final_point()
+	-- 200 is just a value 
+	-- greater than the bounds
+	ball.fx = 200 * sin(ball.r)
+	ball.fy = 200 * cos(ball.r)
+end
+
+function line_eq()
+	local x = ball.x
+	local y = ball.y
+	local x2 = ball.fx
+	local y2 = ball.fy
+	local m = (y2-y)/(x2-x)
+	local c = -1*(m * x)
+	return (m*x) + c
 end
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
