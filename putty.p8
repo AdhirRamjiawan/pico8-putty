@@ -8,9 +8,24 @@ local ball =
 	y=35,
 	s=2,
 	a=0,
-	dx=20,
-	dy=20,
-	move=false
+	dx=1,
+	dy=1,
+	px=20,
+	py=20,
+	move=false,
+	tl = 0
+}
+
+-- travel length
+local tl = 100
+
+
+-- map bounds
+local mb = {
+	x = 20,
+	y = 20,
+	x2 = 120,
+	y2 = 120
 }
 
 function _init()
@@ -22,36 +37,29 @@ function _update()
 		ball.move = true
 	end
 	
-	if btn(⬅️) then
+	if not ball.move and btn(⬅️) then
 		ball.a -= 0.025
-	elseif btn(➡️) then
+	elseif not ball.move and btn(➡️) then
 		ball.a += 0.025
 	else
 		ball.a = 0
 	end
 	
 	if ball.move then
-		ball.x += 0.5
-		ball.y += 0.5
-		ball.dx += 0.5
-		ball.dy += 0.5
+		ball.x += ball.s * ball.dx
+		ball.y += ball.s * ball.dy
+		ball.tl += 1
+		
+		update_dir()
 	end
 	
-	if ball.move and 
-	   ball.x > 80 then
-	   ball.move = false
+	if ball.tl >= tl
+	then
+		ball.move = false
+		ball.tl = 0
 	end
 	
- ball.r = ball.a * 0.01745
-
-	local x = ball.dx - ball.x
-	local y = ball.dy - ball.y
-	
-	ball.dx = (x*cos(ball.r))-(y*sin(ball.r))
-	ball.dy = (y*cos(ball.r))+(x*sin(ball.r))
-	
-	ball.dx += ball.x
-	ball.dy += ball.y
+ update_dir_point()
 
 end
 
@@ -62,7 +70,7 @@ function _draw()
 	print(ball.dx)
 	print(ball.dy)
 	print(ball.a * (0.01745))
-	rect(20, 20, 120, 120)
+	rect(mb.x, mb.y, mb.x2, mb.y2)
 	
 	circ(ball.x, ball.y, ball.s)
 	
@@ -70,9 +78,42 @@ function _draw()
 		line(
 	    ball.x,
 	    ball.y,
-	    ball.dx,
-	    ball.dy)
+	    ball.px,
+	    ball.py)
 	end
+end
+
+function update_dir()
+	if ball.x < mb.x and ball.dx then
+		ball.dx = 1
+	end
+	
+	if (ball.x + ball.s) > mb.x2 and
+	ball.dx > 0 then
+		ball.dx = -1
+	end
+	
+	if ball.y < mb.y and ball.dy < 0 then
+		ball.dy = 1
+	end
+	
+	if (ball.y + ball.s) > mb.y2 and 
+	ball.dy > 0 then
+		ball.dy = -1
+	end
+end
+
+function update_dir_point()
+	ball.r = ball.a * 0.01745
+
+	local x = ball.px - ball.x
+	local y = ball.py - ball.y
+	
+	ball.px = (x*cos(ball.r))-(y*sin(ball.r))
+	ball.py = (y*cos(ball.r))+(x*sin(ball.r))
+	
+	ball.px += ball.x
+	ball.py += ball.y
 end
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
